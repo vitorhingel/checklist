@@ -1,0 +1,61 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model checklists {
+  id                   Int                   @id @default(autoincrement())
+  create_time          DateTime              @default(now())
+  update_time          DateTime              @default(now())
+  name                 String
+  public               Boolean               @default(false)
+  options              options?
+  users_own_checklists users_own_checklists?
+}
+
+model options {
+  id          Int        @id @default(autoincrement())
+  create_time DateTime   @default(now())
+  update_time DateTime   @default(now())
+  author      Int        @unique
+  checklist   Int        @unique
+  users       users      @relation(fields: [author], references: [id])
+  checklists  checklists @relation(fields: [checklist], references: [id])
+
+  @@index([checklist], name: "fk_options_checklists1_idx")
+  @@index([author], name: "fk_options_users1_idx")
+}
+
+model users {
+  id                   Int                   @id @default(autoincrement())
+  create_time          DateTime              @default(now())
+  update_time          DateTime              @default(now())
+  email                String
+  password             String
+  options              options?
+  users_own_checklists users_own_checklists?
+}
+
+model users_own_checklists {
+  user        Int                       @unique
+  checklist   Int                       @unique
+  create_time DateTime                  @default(now())
+  update_time DateTime                  @default(now())
+  role        users_own_checklists_role @default(view)
+  checklists  checklists                @relation(fields: [checklist], references: [id])
+  users       users                     @relation(fields: [user], references: [id])
+
+  @@id([user, checklist])
+  @@index([checklist], name: "fk_dating_checklists1_idx")
+  @@index([user], name: "fk_dating_users_idx")
+}
+
+enum users_own_checklists_role {
+  view
+  edit
+  owner
+}
