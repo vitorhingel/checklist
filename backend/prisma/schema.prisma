@@ -34,8 +34,9 @@ model users {
   id                   Int                   @id @default(autoincrement())
   create_time          DateTime              @default(now())
   update_time          DateTime              @default(now())
-  email                String
+  email                String                @unique
   password             String
+  name                 String
   options              options?
   users_own_checklists users_own_checklists?
 }
