@@ -42,6 +42,11 @@ const remove = async (id) => {
 
     return removedCount;
   } catch (e) {
+    if (parseInt(process.env.DEBUG)) {
+      console.log('-- Model -- ');
+      console.log(e.message);
+    }
+
     throw new Error('Not able to remove this user');
   }
 };

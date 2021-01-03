@@ -23,6 +23,7 @@ model options {
   update_time DateTime   @default(now())
   author      Int        @unique
   checklist   Int        @unique
+  checked     Boolean    @default(false)
   users       users      @relation(fields: [author], references: [id])
   checklists  checklists @relation(fields: [checklist], references: [id])
 
