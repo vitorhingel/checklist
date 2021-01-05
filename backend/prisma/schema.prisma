@@ -39,6 +39,7 @@ model users {
   password             String
   name                 String
   options              options?
+  tokens               tokens[]
   users_own_checklists users_own_checklists?
 }
 
@@ -54,6 +55,17 @@ model users_own_checklists {
   @@id([user, checklist])
   @@index([checklist], name: "fk_dating_checklists1_idx")
   @@index([user], name: "fk_dating_users_idx")
+}
+
+model tokens {
+  id          Int      @id @default(autoincrement())
+  create_time DateTime @default(now())
+  update_time DateTime @default(now())
+  content     String
+  users_id    Int
+  users       users    @relation(fields: [users_id], references: [id])
+
+  @@index([users_id], name: "tokens_users_idx")
 }
 
 enum users_own_checklists_role {
