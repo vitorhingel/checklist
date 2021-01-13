@@ -3,7 +3,7 @@ const { PrismaClient } = require('@prisma/client');
 const { options } = new PrismaClient();
 
 const create = async (data) => {
-  const { user, checklist, checked } = data;
+  const { user, checklist, checked, content } = data;
 
   let data = {};
 
@@ -22,6 +22,8 @@ const create = async (data) => {
     };
 
   if (checked !== undefined) data.checked = checked;
+
+  if (content !== undefined) data.content = content;
 
   try {
     const option = await options.create({ data });
@@ -38,7 +40,7 @@ const create = async (data) => {
 };
 
 const update = async (id, data) => {
-  const { user, checklist, checked } = data;
+  const { user, checklist, checked, content } = data;
 
   let data = {};
 
@@ -57,6 +59,8 @@ const update = async (id, data) => {
     };
 
   if (checked !== undefined) data.checked = checked;
+
+  if (content !== undefined) data.content = content;
 
   data.update_time = new Date();
 
@@ -118,9 +122,25 @@ const find = async (where) => {
   }
 };
 
+const list = async ({ where }) => {
+  try {
+    const listOptions = await options.findMany({ where });
+
+    return listOptions;
+  } catch (e) {
+    if (parseInt(process.env.DEBUG)) {
+      console.log('-- Model -- ');
+      console.log(e.message);
+    }
+
+    throw new Error('Not able to list options');
+  }
+};
+
 module.exports = {
   create,
   update,
   remove,
   find,
+  list,
 };
